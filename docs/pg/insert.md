@@ -1,0 +1,3 @@
+```sql
+INSERT INTO users
+```

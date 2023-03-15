@@ -1,0 +1,52 @@
+<p><a href="https://go.dev/play/p/qVDqWoUQ6AI" target="_blank">https://go.dev/play/p/qVDqWoUQ6AI</a></p>
+
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;time&quot;
+)
+
+func main() {
+
+    i := 2
+    fmt.Print(&quot;Write &quot;, i, &quot; as &quot;)
+    switch i {
+    case 1:
+        fmt.Println(&quot;one&quot;)
+    case 2:
+        fmt.Println(&quot;two&quot;)
+    case 3:
+        fmt.Println(&quot;three&quot;)
+    }
+
+    switch time.Now().Weekday() {
+    case time.Saturday, time.Sunday:
+        fmt.Println(&quot;It's the weekend&quot;)
+    default:
+        fmt.Println(&quot;It's a weekday&quot;)
+    }
+
+    t := time.Now()
+    switch {
+    case t.Hour() &lt; 12:
+        fmt.Println(&quot;It's before noon&quot;)
+    default:
+        fmt.Println(&quot;It's after noon&quot;)
+    }
+
+    whatAmI := func(i interface{}) {
+        switch t := i.(type) {
+        case bool:
+            fmt.Println(&quot;I'm a bool&quot;)
+        case int:
+            fmt.Println(&quot;I'm an int&quot;)
+        default:
+            fmt.Printf(&quot;Don't know type %T\n&quot;, t)
+        }
+    }
+    whatAmI(true)
+    whatAmI(1)
+    whatAmI(&quot;hey&quot;)
+}
+</code></pre>

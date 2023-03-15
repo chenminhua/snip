@@ -1,0 +1,18 @@
+<pre><code class="language-go">func hello(w http.ResponseWriter, req *http.Request) {
+    fmt.Fprintf(w, &quot;hello\n&quot;)
+}
+
+func headers(w http.ResponseWriter, req *http.Request) {
+    for name, headers := range req.Header {
+        for _, h := range headers {
+            fmt.Fprintf(w, &quot;%v: %v\n&quot;, name, h)
+        }
+    }
+}
+
+func main() {
+    http.HandleFunc(&quot;/hello&quot;, hello)
+    http.HandleFunc(&quot;/headers&quot;, headers)
+    http.ListenAndServe(&quot;:8090&quot;, nil)
+}
+</code></pre>

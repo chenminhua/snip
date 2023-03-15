@@ -1,0 +1,202 @@
+<h2 id="unbuffered-channel">unbuffered channel</h2>
+
+<ul>
+<li>If the channel is unbuffered, the sender blocks until the receiver has received the value</li>
+<li>Receiver will be blocked too, if no data sent.</li>
+</ul>
+
+<pre><code class="language-go">func main() {
+    messages := make(chan string)
+    go func() { messages &lt;- &quot;ping&quot; }()
+    msg := &lt;-messages
+    fmt.Println(msg)
+}
+</code></pre>
+
+<h2 id="channel-sync">channel sync</h2>
+
+<pre><code class="language-go">func worker(done chan bool) {
+    fmt.Print(&quot;working...&quot;)
+    time.Sleep(time.Second)
+    fmt.Println(&quot;done&quot;)
+
+    done &lt;- true
+}
+
+func main() {
+    done := make(chan bool, 1)
+    go worker(done)
+    &lt;-done
+}
+</code></pre>
+
+<h2 id="buffered-channel">buffered channel</h2>
+
+<pre><code class="language-go">    messages := make(chan string, 2)
+
+    messages &lt;- &quot;buffered&quot;
+    messages &lt;- &quot;channel&quot;
+
+    fmt.Println(&lt;-messages)
+    fmt.Println(&lt;-messages)
+</code></pre>
+
+<h2 id="channel-directions">channel directions</h2>
+
+<p>When using channels as function parameters, you can specify if a channel is meant to only send or receive values. This specificity increases the type-safety of the program.</p>
+
+<pre><code class="language-go">func ping(pings chan&lt;- string, msg string) {
+    pings &lt;- msg
+}
+
+func pong(pings &lt;-chan string, pongs chan&lt;- string) {
+    msg := &lt;-pings
+    pongs &lt;- msg
+}
+func main() {
+    pings := make(chan string, 1)
+    pongs := make(chan string, 1)
+    ping(pings, &quot;passed message&quot;)
+    pong(pings, pongs)
+    fmt.Println(&lt;-pongs)
+}
+</code></pre>
+
+<h2 id="use-select-to-wait-on-multiple-channel">Use select to wait on multiple channel</h2>
+
+<pre><code class="language-go">c1 := make(chan string)
+c2 := make(chan string)
+
+go func() {
+    time.Sleep(1 * time.Second)
+    c1 &lt;- &quot;one&quot;
+}()
+go func() {
+    time.Sleep(2 * time.Second)
+    c2 &lt;- &quot;two&quot;
+}()
+
+for i := 0; i &lt; 2; i++ {
+    select {
+    case msg1 := &lt;-c1:
+        fmt.Println(&quot;received&quot;, msg1)
+    case msg2 := &lt;-c2:
+        fmt.Println(&quot;received&quot;, msg2)
+    }
+}
+</code></pre>
+
+<h2 id="timeout">timeout</h2>
+
+<p><a href="https://go.dev/play/p/gyr0NbVKBVf" target="_blank">https://go.dev/play/p/gyr0NbVKBVf</a></p>
+
+<pre><code class="language-go">    c1 := make(chan string, 1)
+    go func() {
+        time.Sleep(2 * time.Second)
+        c1 &lt;- &quot;result 1&quot;
+    }()
+
+    select {
+    case res := &lt;-c1:
+        fmt.Println(res)
+    case &lt;-time.After(1 * time.Second):
+        fmt.Println(&quot;timeout 1&quot;)
+    }
+
+    c2 := make(chan string, 1)
+    go func() {
+        time.Sleep(2 * time.Second)
+        c2 &lt;- &quot;result 2&quot;
+    }()
+    select {
+    case res := &lt;-c2:
+        fmt.Println(res)
+    case &lt;-time.After(3 * time.Second):
+        fmt.Println(&quot;timeout 2&quot;)
+    }
+</code></pre>
+
+<h2 id="non-blocking-channel-operation">non-blocking channel operation</h2>
+
+<p><a href="https://go.dev/play/p/TFv6-7OVNVq" target="_blank">https://go.dev/play/p/TFv6-7OVNVq</a></p>
+
+<pre><code class="language-go">func main() {
+    messages := make(chan string)
+    signals := make(chan bool)
+
+    select {
+    case msg := &lt;-messages:
+        fmt.Println(&quot;received message&quot;, msg)
+    default:
+        fmt.Println(&quot;no message received&quot;)
+    }
+
+    msg := &quot;hi&quot;
+    select {
+    case messages &lt;- msg:
+        fmt.Println(&quot;sent message&quot;, msg)
+    default:
+        fmt.Println(&quot;no message sent&quot;)
+    }
+
+    select {
+    case msg := &lt;-messages:
+        fmt.Println(&quot;received message&quot;, msg)
+    case sig := &lt;-signals:
+        fmt.Println(&quot;received signal&quot;, sig)
+    default:
+        fmt.Println(&quot;no activity&quot;)
+    }
+}
+</code></pre>
+
+<h2 id="closing-channel">closing channel</h2>
+
+<p><a href="https://go.dev/play/p/vCvRjcMq7p3" target="_blank">https://go.dev/play/p/vCvRjcMq7p3</a></p>
+
+<p>Closing a channel indicates that no more values will be sent on it. This can be useful to communicate completion to the channel’s receivers.</p>
+
+<pre><code class="language-go">func main() {
+    jobs := make(chan int, 5)
+    done := make(chan bool)
+
+    go func() {
+        for {
+            j, more := &lt;-jobs
+            if more {
+                fmt.Println(&quot;received job&quot;, j)
+            } else {
+                fmt.Println(&quot;received all jobs&quot;)
+                done &lt;- true
+                return
+            }
+        }
+    }()
+
+    for j := 1; j &lt;= 3; j++ {
+        jobs &lt;- j
+        fmt.Println(&quot;sent job&quot;, j)
+    }
+    close(jobs)
+    fmt.Println(&quot;sent all jobs&quot;)
+
+    &lt;-done
+}
+</code></pre>
+
+<h2 id="range-over-channels">range over channels</h2>
+
+<pre><code class="language-go">func main() {
+
+    queue := make(chan string, 2)
+    queue &lt;- &quot;one&quot;
+    queue &lt;- &quot;two&quot;
+    close(queue)
+
+    for elem := range queue {
+        fmt.Println(elem)
+    }
+}
+// one
+// two
+</code></pre>

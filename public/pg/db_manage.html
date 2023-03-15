@@ -1,0 +1,49 @@
+<h2 id="create-db-and-table">CREATE db and table</h2>
+
+<pre><code class="language-sql">CREATE DATABASE dbname;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    UNIQUE (name)
+);
+
+DROP TABLE IF EXISTS users
+</code></pre>
+
+<h2 id="size">size</h2>
+
+<pre><code class="language-sql">SELECT pg_database_size('forumdb');
+
+SELECT pg_size_pretty(pg_database_size('forumdb'));
+</code></pre>
+
+<h2 id="db-table-info">db/table info</h2>
+
+<pre><code class="language-sql">SELECT * FROM pg_database WHERE datname='forumdb';
+
+SELECT * FROM pg_class WHERE relname='users';
+</code></pre>
+
+<h2 id="manage-temp-tables">manage temp tables</h2>
+
+<p>CREATE TABLE only visible in the session where it was created.</p>
+
+<pre><code class="language-sql">CREATE TEMP TABLE IF NOT EXISTS temp_users (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    UNIQUE (name) 
+);
+</code></pre>
+
+<h2 id="unlogged-tables">unlogged tables</h2>
+
+<pre><code class="language-sql">CREATE UNLOGGED TABLE IF NOT EXISTS temp_users (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    UNIQUE (name) 
+);
+</code></pre>

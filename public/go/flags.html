@@ -1,0 +1,47 @@
+<h2 id="flags">flags</h2>
+
+<pre><code class="language-go">wordPtr := flag.String(&quot;word&quot;, &quot;foo&quot;, &quot;a string&quot;)
+numbPtr := flag.Int(&quot;numb&quot;, 42, &quot;an int&quot;)
+flag.Parse()
+</code></pre>
+
+<h2 id="args">args</h2>
+
+<pre><code class="language-go">args := os.Args[1:]
+</code></pre>
+
+<h2 id="subcommands">subcommands</h2>
+
+<pre><code class="language-go">func main() {
+
+    fooCmd := flag.NewFlagSet(&quot;foo&quot;, flag.ExitOnError)
+    fooEnable := fooCmd.Bool(&quot;enable&quot;, false, &quot;enable&quot;)
+    fooName := fooCmd.String(&quot;name&quot;, &quot;&quot;, &quot;name&quot;)
+
+    barCmd := flag.NewFlagSet(&quot;bar&quot;, flag.ExitOnError)
+    barLevel := barCmd.Int(&quot;level&quot;, 0, &quot;level&quot;)
+
+    if len(os.Args) &lt; 2 {
+        fmt.Println(&quot;expected 'foo' or 'bar' subcommands&quot;)
+        os.Exit(1)
+    }
+
+    switch os.Args[1] {
+
+    case &quot;foo&quot;:
+        fooCmd.Parse(os.Args[2:])
+        fmt.Println(&quot;subcommand 'foo'&quot;)
+        fmt.Println(&quot;  enable:&quot;, *fooEnable)
+        fmt.Println(&quot;  name:&quot;, *fooName)
+        fmt.Println(&quot;  tail:&quot;, fooCmd.Args())
+    case &quot;bar&quot;:
+        barCmd.Parse(os.Args[2:])
+        fmt.Println(&quot;subcommand 'bar'&quot;)
+        fmt.Println(&quot;  level:&quot;, *barLevel)
+        fmt.Println(&quot;  tail:&quot;, barCmd.Args())
+    default:
+        fmt.Println(&quot;expected 'foo' or 'bar' subcommands&quot;)
+        os.Exit(1)
+    }
+}
+</code></pre>

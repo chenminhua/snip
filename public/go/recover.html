@@ -1,0 +1,10 @@
+<pre><code class="language-go">go func() {
+    defer func() {
+        if err := recover(); err != nil {
+            fmt.Printf(&quot;[SafeGo] Panic: %+v&quot;, err)
+        }
+    }()
+
+    ...
+}()
+</code></pre>

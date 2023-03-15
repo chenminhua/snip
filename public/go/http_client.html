@@ -1,0 +1,19 @@
+<p><a href="https://gobyexample.com/http-client" target="_blank">https://gobyexample.com/http-client</a></p>
+
+<pre><code class="language-go">    resp, err := http.Get(&quot;https://gobyexample.com&quot;)
+    if err != nil {
+        panic(err)
+    }
+    defer resp.Body.Close()
+
+    fmt.Println(&quot;Response status:&quot;, resp.Status)
+
+    scanner := bufio.NewScanner(resp.Body)
+    for i := 0; scanner.Scan() &amp;&amp; i &lt; 5; i++ {
+        fmt.Println(scanner.Text())
+    }
+
+    if err := scanner.Err(); err != nil {
+        panic(err)
+    }
+</code></pre>

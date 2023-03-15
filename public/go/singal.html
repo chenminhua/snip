@@ -1,0 +1,17 @@
+<p>We might want a server to gracefully shutdown when it receives a SIGTERM.</p>
+
+<p>Go singal notification works by sending os.Singal on a channel. We&rsquo;ll create a channel to receive these notification.</p>
+
+<pre><code class="language-go">sigs := make(chan os.Singal, 1)
+signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+done := make(chan bool, 1)
+
+go func() {
+    sig := &lt;- sigs
+    fmt.Println()
+    fmt.Println(sig)
+    done&lt;-true
+}()
+fmt.Println(&quot;awaiting signal&quot;)
+&lt;-done
+</code></pre>

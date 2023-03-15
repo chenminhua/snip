@@ -1,0 +1,33 @@
+<pre><code class="language-go">    //准备读取文件
+	fileName := &quot;./school_logo_20210726.csv&quot;
+	fs, err := os.Open(fileName)
+	if err != nil {
+		log.Fatalf(&quot;can not open the file_util, err is %+v&quot;, err)
+	}
+	defer fs.Close()
+
+	r := csv.NewReader(fs)
+	//针对大文件，一行一行的读取文件
+	for {
+		row, err := r.Read()
+		if err != nil &amp;&amp; err != io.EOF {
+			log.Fatalf(&quot;can not read, err is %+v&quot;, err)
+		}
+		if err == io.EOF {
+			break
+		}
+		fmt.Println(row)
+	}
+
+	//针对小文件，也可以一次性读取所有的文件
+	//注意，r要重新赋值，因为readall是读取剩下的
+	fs1, _ := os.Open(fileName)
+	r1 := csv.NewReader(fs1)
+	content, err := r1.ReadAll()
+	if err != nil {
+		log.Fatalf(&quot;can not readall, err is %+v&quot;, err)
+	}
+	for _, row := range content {
+		fmt.Println(row)
+	}
+</code></pre>

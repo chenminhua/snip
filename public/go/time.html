@@ -1,0 +1,23 @@
+<p><a href="https://go.dev/play/p/Ly4d_EVtiCs" target="_blank">https://go.dev/play/p/Ly4d_EVtiCs</a></p>
+
+<h2 id="time-formatting-and-parsing">time formatting and parsing</h2>
+
+<p><a href="https://gobyexample.com/time-formatting-parsing" target="_blank">https://gobyexample.com/time-formatting-parsing</a></p>
+
+<pre><code class="language-go">t := time.Now()
+print(t.Format(time.RFC3339)) // 2014-04-15T18:00:15-07:00
+
+t1, _ := time.Parse(time.RFC3339, &quot;2012-11-01T22:08:41+00:00&quot;)
+
+pring(t.Format(&quot;Mon Jan _2 15:04:05 2006&quot;))
+</code></pre>
+
+<h2 id="different-timezone">Different timezone</h2>
+
+<pre><code class="language-go">p := fmt.Println
+t := time.Now()
+p(t)
+p(t.UTC())
+loc, _ := time.LoadLocation(&quot;Asia/Shanghai&quot;)
+p(t.In(loc))
+</code></pre>

@@ -1,0 +1,24 @@
+<p>Ticker can help us do things repeatedly. Below code will print 3 times</p>
+
+<pre><code class="language-go">func main() {
+
+    ticker := time.NewTicker(500 * time.Millisecond)
+    done := make(chan bool)
+
+    go func() {
+        for {
+            select {
+            case &lt;-done:
+                return
+            case t := &lt;-ticker.C:
+                fmt.Println(&quot;Tick at&quot;, t)
+            }
+        }
+    }()
+
+    time.Sleep(1600 * time.Millisecond)
+    ticker.Stop()
+    done &lt;- true
+    fmt.Println(&quot;Ticker stopped&quot;)
+}
+</code></pre>
